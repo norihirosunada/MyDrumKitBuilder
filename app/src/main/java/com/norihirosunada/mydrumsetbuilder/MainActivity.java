@@ -1,10 +1,10 @@
-package com.norihirosunada.mydrumkitbuilder;
+package com.norihirosunada.mydrumsetbuilder;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,21 +12,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 
 import org.rajawali3d.surface.RajawaliSurfaceView;
 
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener,
         NavigationView.OnNavigationItemSelectedListener {
+
+    enum ButtonState{OPEN,CLOSE}
+    ButtonState addObj;
 
     Renderer renderer;
     public RajawaliSurfaceView rajawaliSurfaceView;
 
     static String TAG = "MainActivity";
+
+    CanvasView canvasView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +40,44 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().hide();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        addObj = ButtonState.CLOSE;
+        final FloatingActionButton addCymbal = (FloatingActionButton)findViewById(R.id.fab_cymbal);
+        final FloatingActionButton addDrum = (FloatingActionButton)findViewById(R.id.fab_drum);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Add", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //FAB action
+                if(addObj == ButtonState.CLOSE){
+                    addCymbal.show();
+                    addDrum.show();
+                    addObj = ButtonState.OPEN;
+
+                }else{
+                    addCymbal.hide();
+                    addDrum.hide();
+                    addObj = ButtonState.CLOSE;
+
+                }
+            }
+        });
+
+        addCymbal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //FAB action
+
+            }
+        });
+
+        addDrum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //FAB action
+
             }
         });
 
@@ -65,14 +99,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         renderer = new Renderer(this);
         rajawaliSurfaceView.setSurfaceRenderer(renderer);
 
-//        final RajawaliSurfaceView surface = new RajawaliSurfaceView(this);
-//        surface.setFrameRate(60.0);
-//        surface.setRenderMode(IRajawaliSurface.RENDERMODE_WHEN_DIRTY);
-//        surface.setOnTouchListener(this);
-//        addContentView(surface, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT));
-//
-//        renderer = new Renderer(this);
-//        surface.setSurfaceRenderer(renderer);
+        Display display = this.getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+
+        canvasView = new CanvasView(this);
+        canvasView = (CanvasView)findViewById(R.id.canvas_view);
 
     }
 
@@ -118,11 +150,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.nav_manage:
                 Log.d(TAG, "Item 3 Selected!");
                 break;
-            case R.id.nav_send:
-                Log.d(TAG, "Item 4 Selected!");
-                break;
             case R.id.nav_share:
-                Log.d(TAG, "Item 5 selected");
+                Log.d(TAG, "Item 4 Selected!");
                 break;
         }
 

@@ -3,7 +3,11 @@ package com.norihirosunada.mydrumkitbuilder;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,10 +20,13 @@ import android.view.Window;
 
 import org.rajawali3d.surface.RajawaliSurfaceView;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     Renderer renderer;
     public RajawaliSurfaceView rajawaliSurfaceView;
+
+    static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getSupportActionBar().hide();
 
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +47,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
         });
 
-        rajawaliSurfaceView = (RajawaliSurfaceView)findViewById(R.id.rajawali_surface);
+        //DrawerToggle
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        // NavigationView Listener
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        rajawaliSurfaceView = (RajawaliSurfaceView) findViewById(R.id.rajawali_surface);
         rajawaliSurfaceView.setOnTouchListener(this);
         renderer = new Renderer(this);
         rajawaliSurfaceView.setSurfaceRenderer(renderer);
@@ -58,18 +77,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event){
+    public boolean onTouch(View v, MotionEvent event) {
 
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                renderer.getObjectAt(event.getX(), event.getY(),event);
-                Log.d("onTouched","ACTION_DOWN");
+                renderer.getObjectAt(event.getX(), event.getY(), event);
+                Log.d("onTouched", "ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
-                renderer.getObjectAt(event.getX(),event.getY(),event);
+                renderer.getObjectAt(event.getX(), event.getY(), event);
                 Log.d("onTouched", "ACTION_MOVE");
                 break;
-            default:break;
+            default:
+                break;
         }
         return true;
 //        return super.onTouchEvent(event);
@@ -86,26 +106,29 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+    public boolean onNavigationItemSelected(MenuItem item) {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.nav_edit:
+                Log.d(TAG, "Item 1 Selected!");
+                break;
+            case R.id.nav_gallery:
+                Log.d(TAG, "Item 2 Selected!");
+                break;
+            case R.id.nav_manage:
+                Log.d(TAG, "Item 3 Selected!");
+                break;
+            case R.id.nav_send:
+                Log.d(TAG, "Item 4 Selected!");
+                break;
+            case R.id.nav_share:
+                Log.d(TAG, "Item 5 selected");
+                break;
         }
 
-        return super.onOptionsItemSelected(item);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
-
 
 }

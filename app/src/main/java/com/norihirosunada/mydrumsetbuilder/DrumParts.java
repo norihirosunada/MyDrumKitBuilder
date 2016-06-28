@@ -14,21 +14,20 @@ public class DrumParts {
     String paint;
     boolean view;
 
-    public DrumParts(float x, float y, int i){
+
+    public DrumParts(float x, float y, float radius){
         this.cx = x;
         this.cy = y;
+        this.radius = radius;
+    }
+
+    public void setPosition(float cx, float cy) {
+        this.cx = cx;
+        this.cy = cy;
     }
 
     public String paint(){
         return paint;
-    }
-
-    public void setCX(int x){
-        this.cx = x;
-    }
-
-    public void setCY(int y){
-        this.cy = y;
     }
 
     public void setRadius(float radius){

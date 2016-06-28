@@ -5,7 +5,7 @@ import android.graphics.Paint;
 /**
  * Created by norihirosunada on 16/06/28.
  */
-public class drumParts {
+public class DrumParts {
 
     String instruments;
     float cx=0;
@@ -14,7 +14,7 @@ public class drumParts {
     String paint;
     boolean view;
 
-    public drumParts(float x, float y, int i){
+    public DrumParts(float x, float y, int i){
         this.cx = x;
         this.cy = y;
     }

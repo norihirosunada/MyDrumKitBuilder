@@ -1,6 +1,7 @@
 package com.norihirosunada.mydrumsetbuilder;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,16 +12,18 @@ import android.view.View;
  * Created by norihirosunada on 16/05/05.
  */
 public class CanvasView extends View {
+    boolean onFirsttime=true;
+
     Paint drumPaint = new Paint();
     Paint cymbalPaint = new Paint();
     String viewflg;
     float x=0,y=0,width=0,height=0,xc,yc;
 
-    drumParts[] drums = new drumParts[100];
-
+    drumParts[] drums;
 
     public CanvasView(Context context) {
         this(context, null);
+        drums = new drumParts[10];
     }
 
     public CanvasView(Context context, AttributeSet attrs) {
@@ -29,6 +32,8 @@ public class CanvasView extends View {
 
     public CanvasView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+//        init();
+
 
     }
 
@@ -54,13 +59,13 @@ public class CanvasView extends View {
         height = sheight;
     }
 
-    public void addInstruments(int id, float cx, float cy, int radius){
+    public void addInstrument(int id, float cx, float cy, float radius){
         drums[id].cx = cx;
         drums[id].cy = cy;
         drums[id].radius = radius;
     }
 
-    public void setRadius(int id, int radius){
+    public void setRadius(int id, float radius){
         drums[id].radius = radius;
     }
 
@@ -76,8 +81,12 @@ public class CanvasView extends View {
         drumPaint.setAntiAlias(true);
         drumPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        for(int i=0; i<drums.length; i++){
-            canvas.drawCircle(drums[i].cx(),drums[i].cy(),drums[i].radius,drumPaint);
+        if(onFirsttime) {
+            init();
+            onFirsttime = false;
+        }
+        for (int i = 0; i < drums.length - 1; i++) {
+            canvas.drawCircle(drums[i].cx, drums[i].cy, drums[i].radius, drumPaint);
         }
 
         canvas.translate(-x,-y);

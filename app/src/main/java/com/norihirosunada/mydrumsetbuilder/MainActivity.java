@@ -27,12 +27,15 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     enum ButtonState{OPEN,CLOSE}
     ButtonState addObj;
 
-    Renderer renderer;
-    public RajawaliSurfaceView rajawaliSurfaceView;
+//    Renderer renderer;
+//    public RajawaliSurfaceView rajawaliSurfaceView;
 
     static String TAG = "MainActivity";
 
     CanvasView canvasView;
+
+    int id=0;
+    float downX=0,downY=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().hide();
+
+        Display display = this.getWindowManager().getDefaultDisplay();
+        final Point point = new Point();
+        display.getSize(point);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -55,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                     addCymbal.show();
                     addDrum.show();
                     addObj = ButtonState.OPEN;
+
 
                 }else{
                     addCymbal.hide();
@@ -77,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             @Override
             public void onClick(View view) {
                 //FAB action
+                canvasView.addInstrument(id,point.x/2,point.y/2,20);
 
             }
         });
@@ -94,17 +103,17 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        rajawaliSurfaceView = (RajawaliSurfaceView) findViewById(R.id.rajawali_surface);
-        rajawaliSurfaceView.setOnTouchListener(this);
-        renderer = new Renderer(this);
-        rajawaliSurfaceView.setSurfaceRenderer(renderer);
+//        rajawaliSurfaceView = (RajawaliSurfaceView) findViewById(R.id.rajawali_surface);
+//        rajawaliSurfaceView.setOnTouchListener(this);
+//        renderer = new Renderer(this);
+//        rajawaliSurfaceView.setSurfaceRenderer(renderer);
 
-        Display display = this.getWindowManager().getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
 
-        canvasView = new CanvasView(this);
         canvasView = (CanvasView)findViewById(R.id.canvas_view);
+//        canvasView.init();
+
+        canvasView.setPoints(200,200,200,200);
+        canvasView.clear();
 
     }
 
@@ -113,11 +122,20 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                renderer.getObjectAt(event.getX(), event.getY(), event);
+                downX = event.getX();
+                downY = event.getY();
+//                renderer.getObjectAt(downX, downY, event);
+                canvasView.setPoints(downX, downY, 100, 100);
+                canvasView.addInstrument(id,downX,downY,20);
+                canvasView.clear();
                 Log.d("onTouched", "ACTION_DOWN");
                 break;
             case MotionEvent.ACTION_MOVE:
-                renderer.getObjectAt(event.getX(), event.getY(), event);
+//                renderer.getObjectAt(event.getX(), event.getY(), event);
+                canvasView.setPoints(event.getX(),event.getY(),100,100);
+                float radius = getDistance(downX,event.getX(),downY,event.getY());
+                canvasView.setRadius(id,radius);
+                canvasView.clear();
                 Log.d("onTouched", "ACTION_MOVE");
                 break;
             default:
@@ -125,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         }
         return true;
 //        return super.onTouchEvent(event);
+    }
+
+    public float getDistance(float x1, float x2, float y1, float y2){
+        return (float)Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
     }
 
     @Override

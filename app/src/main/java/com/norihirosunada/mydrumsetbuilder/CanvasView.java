@@ -1,7 +1,6 @@
 package com.norihirosunada.mydrumsetbuilder;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,11 +18,10 @@ public class CanvasView extends View {
     String viewflg;
     float x=0,y=0,width=0,height=0,xc,yc;
 
-    drumParts[] drums;
+    DrumParts[] drums = new DrumParts[10];
 
     public CanvasView(Context context) {
         this(context, null);
-        drums = new drumParts[10];
     }
 
     public CanvasView(Context context, AttributeSet attrs) {

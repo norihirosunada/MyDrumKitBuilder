@@ -17,7 +17,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <include layout="@layout/content_main" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|right">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_cymbal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_add_circle_black_24dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorAccent"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_drum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_add_circle_black_24dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorPrimary"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
@@ -25,13 +48,21 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/fab_margin"
-            android:src="@android:drawable/ic_input_add" />
+            android:src="@mipmap/ic_add_circle_black_24dp" />
+        </LinearLayout>
+
+        <com.norihirosunada.mydrumsetbuilder.CanvasView
+            android:id="@+id/canvas_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 
+
+
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"

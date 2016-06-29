@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -20,13 +21,13 @@ import java.util.List;
 public class CanvasView extends View {
 
     Paint drumPaint = new Paint();
-    Paint cymbalPaint = new Paint();
+    Paint stroke = new Paint();
     String viewflg;
 
     List<DrumParts> drums;
     private int selectDrumId = -1;
     private float lastTouchX, lastTouchY;
-
+    GestureDetector gestureDetector;
 
     public CanvasView(Context context) {
         this(context, null);
@@ -39,57 +40,91 @@ public class CanvasView extends View {
     public CanvasView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+        gestureDetector = new GestureDetector(context,onGestureListener);
 
-
-    }
-
-    public void clear(){
-//        viewflg = flg;
-
-
-        invalidate();
     }
 
     public void init(){
         drums = new ArrayList<>();
     }
 
-    public void addDrum(float cx, float cy, float radius){
-        drums.add(new DrumParts(cx, cy, radius));
+    public void addDrum(float cx, float cy, float radius, String instid){
+        drums.add(new DrumParts(cx, cy, radius, instid));
+    }
+
+    public void addDrum(float cx, float cy, float width, float height, String instid){
+        drums.add(new DrumParts(cx, cy, width, height, instid));
     }
 
     public void setRadius(int id, float radius){
         drums.get(id).radius = radius;
     }
 
+    public void setWidth(int id, float width){
+        drums.get(id).width = width;
+    }
+
+    public void setHeight(int id, float height){
+        drums.get(id).height = height;
+    }
+
     @Override
     protected void onDraw(Canvas canvas){
+        canvas.drawColor(Color.WHITE);
 
-        drumPaint.setStrokeWidth(30);
+        stroke.setStrokeWidth(10);
+        stroke.setAntiAlias(true);
+        stroke.setStyle(Paint.Style.STROKE);
+
         drumPaint.setAntiAlias(true);
-        drumPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        drumPaint.setStyle(Paint.Style.FILL);
+
         for (int i = 0; i < drums.size(); i++) {
             if (i == selectDrumId) {
-                drumPaint.setColor(Color.YELLOW);
+                stroke.setColor(Color.RED);
             } else {
-                drumPaint.setColor(Color.argb(255, 68, 125, 125));
+                stroke.setColor(Color.BLACK);
             }
-            canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
+            String instId = drums.get(i).instid;
+            if(instId == "drum"){
+                drumPaint.setColor(Color.WHITE);
+                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
+                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, stroke);
+            }else if(instId == "cymbal"){
+                drumPaint.setColor(Color.YELLOW);
+                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
+                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, stroke);
+            }else if(instId == "bass"){
+                drumPaint.setColor(Color.GRAY);
+                canvas.drawRect(drums.get(i).cx - drums.get(i).width,
+                        drums.get(i).cy - drums.get(i).height,
+                        drums.get(i).cx + drums.get(i).width,
+                        drums.get(i).cy + drums.get(i).height,
+                        drumPaint);
+                canvas.drawRect(drums.get(i).cx-drums.get(i).width,
+                        drums.get(i).cy-drums.get(i).height,
+                        drums.get(i).cx+drums.get(i).width,
+                        drums.get(i).cy+drums.get(i).height,
+                        stroke);
+            }
+
         }
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event);
+
         float touchX = event.getX(), touchY = event.getY();
-        Log.d("CanvasView", "Touch(touchX:" + touchX + ", cy:" + touchY + ")");
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.d("CanvasView", "Touch(touchX:" + touchX + ", cy:" + touchY + ")");
                 Log.d("CanvasView", "ACTION_DOWN");
                 for (int i = 0; i < drums.size(); i++) {
                     if (isTouch(drums.get(i), touchX, touchY)) {
                         selectDrumId = i;
-                        Toast.makeText(getContext(), "タッチしました", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "タッチしました", Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }
@@ -115,11 +150,46 @@ public class CanvasView extends View {
         return true;
     }
 
+    public final GestureDetector.SimpleOnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener(){
+
+        @Override
+        public void onLongPress(MotionEvent event){
+            Log.d("CanvasView", "ACTION_LONGPRESS");
+            if (selectDrumId != -1) {
+
+            }
+            super.onLongPress(event);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY){
+            float touchX = event2.getX(), touchY = event2.getY();
+            Log.d("CanvasView", "Fling(flingX:" + touchX + ", flingy:" + touchY + ")");
+            if(velocityY > 10000 && selectDrumId != -1){
+                drums.remove(selectDrumId);
+                invalidate();
+                Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+            }
+
+            Log.d("CanvasView", "ACTION_FLING"+velocityX+" "+velocityY);
+            return false;
+        }
+
+    };
+
     boolean isTouch(DrumParts drumParts, float touchX, float touchY) {
+        boolean bool = true;
         Log.d("CanvasView", "DrumPart(cx:" + drumParts.cx + ", cy:" + drumParts.cy + ")");
-        double distance = Math.sqrt(Math.pow(drumParts.cx - touchX, 2) + Math.pow(drumParts.cy - touchY, 2));
-        Log.d("CanvasView", "Distance:" + distance + ", Radius:" + drumParts.radius);
-        return distance < drumParts.radius;
+        if (drumParts.instid == "drum" || drumParts.instid == "cymbal"){
+            double distance = Math.sqrt(Math.pow(drumParts.cx - touchX, 2) + Math.pow(drumParts.cy - touchY, 2));
+            Log.d("CanvasView", "Distance:" + distance + ", Radius:" + drumParts.radius);
+            bool =  distance < drumParts.radius;
+        }else {
+            double distanceWidth = Math.abs(drumParts.cx-touchX);
+            double distanceHeight = Math.abs(drumParts.cy-touchY);
+            bool = distanceWidth < drumParts.width && distanceHeight < drumParts.height;
+        }
+        return bool;
     }
 
 }

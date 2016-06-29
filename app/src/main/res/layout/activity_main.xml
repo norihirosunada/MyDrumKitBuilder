@@ -17,6 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <com.norihirosunada.mydrumsetbuilder.CanvasView
+            android:id="@+id/canvas_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -43,6 +48,16 @@
             app:backgroundTint="@color/colorPrimary"/>
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_bass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_add_circle_black_24dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorAccent"/>
+
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,10 +66,53 @@
             android:src="@mipmap/ic_add_circle_black_24dp" />
         </LinearLayout>
 
-        <com.norihirosunada.mydrumsetbuilder.CanvasView
-            android:id="@+id/canvas_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:background="#7fbdbcbc"
+            android:padding="8dp"
+            android:id="@+id/linearLayout">
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Select Scale"
+                android:gravity="center_horizontal" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center_horizontal">
+
+                <NumberPicker
+                    android:id="@+id/numPicker1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
+
+                <NumberPicker
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/numPicker2" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OK"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_gravity="center"
+                android:onClick="setScale" />
+        </LinearLayout>
 
     </FrameLayout>
 

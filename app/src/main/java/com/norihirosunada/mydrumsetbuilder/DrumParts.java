@@ -11,8 +11,6 @@ public class DrumParts {
     float cx=0;
     float cy=0;
     float radius=0;
-    String paint;
-    boolean view;
     float width=0,height=0;
 
 
@@ -34,10 +32,6 @@ public class DrumParts {
     public void setPosition(float cx, float cy) {
         this.cx = cx;
         this.cy = cy;
-    }
-
-    public String paint(){
-        return paint;
     }
 
     public void setRadius(float radius){

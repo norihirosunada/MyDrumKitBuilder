@@ -1,9 +1,11 @@
 package com.norihirosunada.mydrumsetbuilder;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -12,6 +14,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +30,6 @@ public class CanvasView extends View {
 
     Paint drumPaint = new Paint();
     Paint stroke = new Paint();
-    String viewflg;
 
     List<DrumParts> drums;
     private int selectDrumId = -1;
@@ -54,18 +61,6 @@ public class CanvasView extends View {
 
     public void addDrum(float cx, float cy, float width, float height, String instid){
         drums.add(new DrumParts(cx, cy, width, height, instid));
-    }
-
-    public void setRadius(int id, float radius){
-        drums.get(id).radius = radius;
-    }
-
-    public void setWidth(int id, float width){
-        drums.get(id).width = width;
-    }
-
-    public void setHeight(int id, float height){
-        drums.get(id).height = height;
     }
 
     @Override
@@ -155,9 +150,8 @@ public class CanvasView extends View {
         @Override
         public void onLongPress(MotionEvent event){
             Log.d("CanvasView", "ACTION_LONGPRESS");
-            if (selectDrumId != -1) {
-
-            }
+//            onSaveJson();
+            Toast.makeText(getContext(), "Saved Data", Toast.LENGTH_SHORT).show();
             super.onLongPress(event);
         }
 
@@ -165,7 +159,7 @@ public class CanvasView extends View {
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY){
             float touchX = event2.getX(), touchY = event2.getY();
             Log.d("CanvasView", "Fling(flingX:" + touchX + ", flingy:" + touchY + ")");
-            if(velocityY > 10000 && selectDrumId != -1){
+            if(velocityY > 10000 && selectDrumId != -1) {
                 drums.remove(selectDrumId);
                 invalidate();
                 Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
@@ -192,4 +186,53 @@ public class CanvasView extends View {
         return bool;
     }
 
+    public void onSaveJson(SharedPreferences pref) {
+        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
+//        setSharedPreferencesJSONArray(this.getContext(), file.toString(), Context.MODE_PRIVATE, "Setting1", drums);
+
+        Gson gson = new Gson();
+        gson.toJson(drums);
+        pref.edit().putString("MySetting",gson.toJson(drums)).commit();
+    }
+
+//    public static boolean setSharedPreferencesJSONArray(final Context context,String filename,int mode,String key,List<?> data){
+//        try{
+//            JSONArray root = new JSONArray();
+//            for(int i=0;i<data.size();i++)root.put(data.get(i));
+//            context.getSharedPreferences(filename,mode).edit().putString(key, root.toString()).commit();
+//            Log.d("json",root.toString());
+//            return true;
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+
+    public void onLoadJson(SharedPreferences pref){
+        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
+//        if(drums != null)
+//            drums=getSharedPreferencesStringList(this.getContext(),file.toString(), Context.MODE_PRIVATE, "Setting1", null);
+
+        Gson gson = new Gson();
+        drums = gson.fromJson(pref.getString("MySetting",""),List.class);
+        invalidate();
+    }
+
+
+//    public static List<DrumParts> getSharedPreferencesStringList(final Context context,String filename,int mode,String key,String defValue){
+//        try{
+//            String json=context.getSharedPreferences(filename,mode).getString(key, defValue);
+//            if(json==null)return null;
+//
+//            JSONArray array =new JSONArray(json);
+//            List<DrumParts>  p = new ArrayList<DrumParts>();
+//            for(int i=0;i< array.length();i++){
+//                p.add((DrumParts)array.get(i));
+//            }
+//            return p;
+//        }catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 }

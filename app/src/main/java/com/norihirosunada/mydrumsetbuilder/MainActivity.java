@@ -3,6 +3,7 @@ package com.norihirosunada.mydrumsetbuilder;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -31,7 +32,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.rajawali3d.surface.RajawaliSurfaceView;
+//import org.rajawali3d.surface.RajawaliSurfaceView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Button button;
     TextView text;
     String instrument;
+
+    SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         linearLayout.setVisibility(View.GONE);
         numberPicker2.setVisibility(View.GONE);
 
+        pref = getSharedPreferences("pref",MODE_PRIVATE);
     }
 
     @Override
@@ -192,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_gallery:
                 Log.d(TAG, "nav_gallery Selected!");
+                canvasView.onLoadJson(pref);
                 break;
             case R.id.nav_share:
 //                tweetImage();
@@ -200,8 +205,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, "nav_share Selected!");
                 break;
             case R.id.nav_save:
-                saveToFile();
                 Log.d(TAG, "nav_save Selected!");
+                saveToFile();
+                canvasView.onSaveJson(pref);
                 break;
         }
 

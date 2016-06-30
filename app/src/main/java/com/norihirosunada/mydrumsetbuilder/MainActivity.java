@@ -199,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 canvasView.onLoadJson(pref);
                 break;
             case R.id.nav_share:
-//                tweetImage();
-//                shareImage();
                 share(this,"#MyDrumSetting");
                 Log.d(TAG, "nav_share Selected!");
                 break;
@@ -227,52 +225,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return bitmap;
     }
 
-    public void shareImage() {
-        String appKeyword = "twitter";
-        List<Intent> shareIntentList = new ArrayList<Intent>();
-        //起動するインテントのリスト
-        List<ResolveInfo> resolveInfoList =
-                getPackageManager().queryIntentActivities(new Intent(Intent.ACTION_SEND).setType("image/*"), 0);
-        //SNSアプリの一覧
-        for(ResolveInfo info : resolveInfoList){
-            Intent shareIntent = new Intent(Intent.ACTION_SEND).setType("image/*");
-
-            if(info.activityInfo.packageName.toLowerCase().contains(appKeyword)){
-//                shareIntent.putExtra(Intent.EXTRA_TEXT, message);
-                File image = new File(file.getAbsoluteFile()+"setting.PNG");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(image));
-                shareIntent.setPackage(info.activityInfo.packageName);
-                shareIntentList.add(shareIntent);
-            }
-        }
-
-        //もし該当するアプリが1つでもあれば起動する
-        if(!shareIntentList.isEmpty()){
-            Intent chooserIntent = Intent.createChooser(shareIntentList.remove(0),
-                    getString(R.string.sns_chooser_title));
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
-                    shareIntentList.toArray(new Parcelable[]{}));
-            startActivity(chooserIntent);
-        }
-    }
-
-    public void tweetImage(){
-        String message="テスト ＃コメント";
-        File imagePath=new File(file.getAbsolutePath()+"setting.PNG");
-
-        ShareCompat.IntentBuilder builder = ShareCompat.IntentBuilder.from(this);
-
-// データをセットする
-        builder.setChooserTitle("Choose App");
-        builder.setText(message);
-        builder.setType("image/png");
-        builder.setStream(Uri.fromFile(imagePath));
-// アプリ選択画面を起動
-        builder.startChooser();
-    }
 
     public void share(final Activity activity, final String text) {
-        File imagePath=new File(file.getAbsolutePath()+"setting.PNG");
+        File imagePath= new File(Environment.getExternalStorageDirectory().getPath() + "/MyDrumSetGallery/setting.PNG");
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, text);

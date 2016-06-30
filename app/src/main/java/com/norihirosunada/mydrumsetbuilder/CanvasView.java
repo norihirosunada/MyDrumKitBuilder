@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -214,7 +215,7 @@ public class CanvasView extends View {
 //            drums=getSharedPreferencesStringList(this.getContext(),file.toString(), Context.MODE_PRIVATE, "Setting1", null);
 
         Gson gson = new Gson();
-        drums = gson.fromJson(pref.getString("MySetting",""),List.class);
+        drums = gson.fromJson(pref.getString("MySetting",""),new TypeToken<List<DrumParts>>(){}.getType());
         invalidate();
     }
 

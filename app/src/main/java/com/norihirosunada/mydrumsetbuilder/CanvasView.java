@@ -193,12 +193,12 @@ public class CanvasView extends View {
 
         Gson gson = new Gson();
 //        gson.toJson(drums);
-        pref.edit().putString("MySetting",gson.toJson(drums)).commit();
+//        pref.edit().putString("MySetting",gson.toJson(drums)).commit();
 
-//        pref.edit().putInt("size",drums.size()).commit();
-//        for(int i=0; i<drums.size(); i++){
-//            pref.edit().putString("drum"+i,gson.toJson(drums.get(i))).commit();
-//        }
+        pref.edit().putInt("size",drums.size()).commit();
+        for(int i=0; i<drums.size(); i++){
+            pref.edit().putString("drum"+i,gson.toJson(drums.get(i))).commit();
+        }
 
     }
 
@@ -208,13 +208,13 @@ public class CanvasView extends View {
 //            drums=getSharedPreferencesStringList(this.getContext(),file.toString(), Context.MODE_PRIVATE, "Setting1", null);
 
         Gson gson = new Gson();
-        drums = gson.fromJson(pref.getString("MySetting",""),new TypeToken<List<DrumParts>>(){}.getType());
+//        drums = gson.fromJson(pref.getString("MySetting",""),new TypeToken<List<DrumParts>>(){}.getType());
 //        drums.addAll(gson.fromJson(pref.getString("MySetting",""),DrumParts[].class));
 
-//        int size = pref.getInt("size",0);
-//        for(int i=0; i<size; i++){
-//            drums.set(i,gson.fromJson(pref.getString("drums"+i,""),DrumParts.class));
-//        }
+        int size = pref.getInt("size",0);
+        for(int i=0; i<size; i++){
+            drums.set(i,gson.fromJson(pref.getString("drums"+i,""),DrumParts.class));
+        }
 
         invalidate();
     }

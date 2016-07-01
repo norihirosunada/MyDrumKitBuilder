@@ -175,11 +175,11 @@ public class CanvasView extends View {
     boolean isTouch(DrumParts drumParts, float touchX, float touchY) {
         boolean bool;
         Log.d("CanvasView", "DrumPart(cx:" + drumParts.cx + ", cy:" + drumParts.cy + ")");
-        if (drumParts.instid == "drum" || drumParts.instid == "cymbal"){
+        if (drumParts.instid.equals("drum") || drumParts.instid.equals("cymbal")){
             double distance = Math.sqrt(Math.pow(drumParts.cx - touchX, 2) + Math.pow(drumParts.cy - touchY, 2));
             Log.d("CanvasView", "Distance:" + distance + ", Radius:" + drumParts.radius);
             bool =  distance < drumParts.radius;
-        }else if(drumParts.instid == "bass"){
+        }else if(drumParts.instid.equals("bass")){
             double distanceWidth = Math.abs(drumParts.cx-touchX);
             double distanceHeight = Math.abs(drumParts.cy-touchY);
             bool = distanceWidth < drumParts.width && distanceHeight < drumParts.depth;

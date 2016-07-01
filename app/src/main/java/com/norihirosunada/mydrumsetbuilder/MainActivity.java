@@ -4,18 +4,13 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -32,17 +26,8 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import org.rajawali3d.surface.RajawaliSurfaceView;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -145,15 +130,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         canvasView = (CanvasView)findViewById(R.id.canvas_view);
         canvasView.post(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 1; i++) {
-//                    Random random = new Random();
-//                    canvasView.addDrum(random.nextInt(canvasView.getWidth()), random.nextInt(canvasView.getHeight()), 50);
-                    canvasView.addDrum(point.x/2,point.y/2,100,"drum");
+                    canvasView.addDrum(point.x/2,point.y/2-200,220,180,"bass");
+                    canvasView.addDrum(point.x/2-130,point.y/2-130,100,"drum");  //high tom
+                    canvasView.addDrum(point.x/2+100,point.y/2-130,120,"drum"); //low tom
+                    canvasView.addDrum(point.x/2-200,point.y/2+130,140,"drum"); //snare drum
+                    canvasView.addDrum(point.x/2+200,point.y/2+150,160,"drum"); //floor tom
+                    canvasView.addDrum(point.x/2-420,point.y/2+50,140,"cymbal");   //hihat
+                    canvasView.addDrum(point.x/2+450,point.y/2+100,200,"cymbal");   //ride
+                    canvasView.addDrum(point.x/2-350,point.y/2-200,160,"cymbal");   //crash
+                    canvasView.addDrum(point.x/2+350,point.y/2-180,180,"cymbal");   //crash
                 }
                 canvasView.invalidate();
             }

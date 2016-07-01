@@ -11,7 +11,7 @@ public class DrumParts {
     float cx=0;
     float cy=0;
     float radius=0;
-    float width=0,height=0;
+    float width=0,depth=0;
 
 
     public DrumParts(float x, float y, float radius, String instrument){
@@ -21,11 +21,11 @@ public class DrumParts {
         this.instid = instrument;
     }
 
-    public DrumParts(float x, float y, float width, float height, String instrument){
+    public DrumParts(float x, float y, float width, float depth, String instrument){
         this.cx = x;
         this.cy = y;
         this.width = width;
-        this.height = height;
+        this.depth = depth;
         this.instid = instrument;
     }
 

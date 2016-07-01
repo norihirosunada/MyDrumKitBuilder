@@ -32,7 +32,7 @@ public class CanvasView extends View {
     Paint drumPaint = new Paint();
     Paint stroke = new Paint();
 
-    List<DrumParts> drums;
+    ArrayList<DrumParts> drums;
     private int selectDrumId = -1;
     private float lastTouchX, lastTouchY;
     GestureDetector gestureDetector;
@@ -93,14 +93,14 @@ public class CanvasView extends View {
             }else if(instId == "bass"){
                 drumPaint.setColor(Color.GRAY);
                 canvas.drawRect(drums.get(i).cx - drums.get(i).width,
-                        drums.get(i).cy - drums.get(i).height,
+                        drums.get(i).cy - drums.get(i).depth,
                         drums.get(i).cx + drums.get(i).width,
-                        drums.get(i).cy + drums.get(i).height,
+                        drums.get(i).cy + drums.get(i).depth,
                         drumPaint);
                 canvas.drawRect(drums.get(i).cx-drums.get(i).width,
-                        drums.get(i).cy-drums.get(i).height,
+                        drums.get(i).cy-drums.get(i).depth,
                         drums.get(i).cx+drums.get(i).width,
-                        drums.get(i).cy+drums.get(i).height,
+                        drums.get(i).cy+drums.get(i).depth,
                         stroke);
             }
 
@@ -182,7 +182,7 @@ public class CanvasView extends View {
         }else {
             double distanceWidth = Math.abs(drumParts.cx-touchX);
             double distanceHeight = Math.abs(drumParts.cy-touchY);
-            bool = distanceWidth < drumParts.width && distanceHeight < drumParts.height;
+            bool = distanceWidth < drumParts.width && distanceHeight < drumParts.depth;
         }
         return bool;
     }
@@ -192,22 +192,15 @@ public class CanvasView extends View {
 //        setSharedPreferencesJSONArray(this.getContext(), file.toString(), Context.MODE_PRIVATE, "Setting1", drums);
 
         Gson gson = new Gson();
-        gson.toJson(drums);
+//        gson.toJson(drums);
         pref.edit().putString("MySetting",gson.toJson(drums)).commit();
-    }
 
-//    public static boolean setSharedPreferencesJSONArray(final Context context,String filename,int mode,String key,List<?> data){
-//        try{
-//            JSONArray root = new JSONArray();
-//            for(int i=0;i<data.size();i++)root.put(data.get(i));
-//            context.getSharedPreferences(filename,mode).edit().putString(key, root.toString()).commit();
-//            Log.d("json",root.toString());
-//            return true;
-//        }catch (Exception e) {
-//            e.printStackTrace();
+//        pref.edit().putInt("size",drums.size()).commit();
+//        for(int i=0; i<drums.size(); i++){
+//            pref.edit().putString("drum"+i,gson.toJson(drums.get(i))).commit();
 //        }
-//        return false;
-//    }
+
+    }
 
     public void onLoadJson(SharedPreferences pref){
         File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
@@ -216,24 +209,14 @@ public class CanvasView extends View {
 
         Gson gson = new Gson();
         drums = gson.fromJson(pref.getString("MySetting",""),new TypeToken<List<DrumParts>>(){}.getType());
+//        drums.addAll(gson.fromJson(pref.getString("MySetting",""),DrumParts[].class));
+
+//        int size = pref.getInt("size",0);
+//        for(int i=0; i<size; i++){
+//            drums.set(i,gson.fromJson(pref.getString("drums"+i,""),DrumParts.class));
+//        }
+
         invalidate();
     }
 
-
-//    public static List<DrumParts> getSharedPreferencesStringList(final Context context,String filename,int mode,String key,String defValue){
-//        try{
-//            String json=context.getSharedPreferences(filename,mode).getString(key, defValue);
-//            if(json==null)return null;
-//
-//            JSONArray array =new JSONArray(json);
-//            List<DrumParts>  p = new ArrayList<DrumParts>();
-//            for(int i=0;i< array.length();i++){
-//                p.add((DrumParts)array.get(i));
-//            }
-//            return p;
-//        }catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
 }

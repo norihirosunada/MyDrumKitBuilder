@@ -15,9 +15,7 @@ public class DrumParts {
     float radius=0;
     float width=0,depth=0;
 
-    public DrumParts(){
-        super();
-    }
+    public DrumParts(){}
 
     public DrumParts(float x, float y, float radius, String instrument){
         this.cx = x;

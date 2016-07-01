@@ -188,22 +188,25 @@ public class CanvasView extends View {
     }
 
     public void onSaveJson(SharedPreferences pref) {
-        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
+//        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
 //        setSharedPreferencesJSONArray(this.getContext(), file.toString(), Context.MODE_PRIVATE, "Setting1", drums);
 
         Gson gson = new Gson();
 //        gson.toJson(drums);
-//        pref.edit().putString("MySetting",gson.toJson(drums)).commit();
+        pref.edit().putString("MySetting",gson.toJson(drums)).commit();
 
-        pref.edit().putInt("size",drums.size()).commit();
-        for(int i=0; i<drums.size(); i++){
-            pref.edit().putString("drum"+i,gson.toJson(drums.get(i))).commit();
-        }
+        Log.d("debugJson",gson.toJson(drums));
+
+
+//        pref.edit().putInt("size",drums.size()).commit();
+//        for(int i=0; i<drums.size(); i++){
+//            pref.edit().putString("drum"+i,gson.toJson(drums.get(i))).commit();
+//        }
 
     }
 
     public void onLoadJson(SharedPreferences pref){
-        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
+//        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
 //        if(drums != null)
 //            drums=getSharedPreferencesStringList(this.getContext(),file.toString(), Context.MODE_PRIVATE, "Setting1", null);
 
@@ -211,10 +214,22 @@ public class CanvasView extends View {
 //        drums = gson.fromJson(pref.getString("MySetting",""),new TypeToken<List<DrumParts>>(){}.getType());
 //        drums.addAll(gson.fromJson(pref.getString("MySetting",""),DrumParts[].class));
 
-        int size = pref.getInt("size",0);
-        for(int i=0; i<size; i++){
-            drums.set(i,gson.fromJson(pref.getString("drums"+i,""),DrumParts.class));
+//        int size = pref.getInt("size",0);
+//        for(int i=0; i<size; i++){
+//            drums.set(i,gson.fromJson(pref.getString("drums"+i,""),DrumParts.class));
+//        }
+
+        String getJson = pref.getString("MySetting", "");
+        drums.clear();
+        drums = gson.fromJson(getJson, new TypeToken<List<DrumParts>>(){}.getType());
+        Log.d("debugJson", pref.getString("MySetting", ""));
+
+        for(int i=0; i<drums.size(); i++){
+            Log.d("debugJson","cx:"+drums.get(i).cx);
+            Log.d("debugJson",drums.get(i).instid);
+
         }
+        Log.d("debugJson",""+drums.size());
 
         invalidate();
     }

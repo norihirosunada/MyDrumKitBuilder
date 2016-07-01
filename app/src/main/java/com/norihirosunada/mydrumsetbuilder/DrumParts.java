@@ -2,6 +2,8 @@ package com.norihirosunada.mydrumsetbuilder;
 
 import android.graphics.Paint;
 
+import java.security.PublicKey;
+
 /**
  * Created by norihirosunada on 16/06/28.
  */
@@ -13,6 +15,9 @@ public class DrumParts {
     float radius=0;
     float width=0,depth=0;
 
+    public DrumParts(){
+        super();
+    }
 
     public DrumParts(float x, float y, float radius, String instrument){
         this.cx = x;

@@ -152,7 +152,7 @@ public class CanvasView extends View {
         public void onLongPress(MotionEvent event){
             Log.d("CanvasView", "ACTION_LONGPRESS");
 //            onSaveJson();
-            Toast.makeText(getContext(), "Saved Data", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "Saved Data", Toast.LENGTH_SHORT).show();
             super.onLongPress(event);
         }
 
@@ -173,16 +173,18 @@ public class CanvasView extends View {
     };
 
     boolean isTouch(DrumParts drumParts, float touchX, float touchY) {
-        boolean bool = true;
+        boolean bool;
         Log.d("CanvasView", "DrumPart(cx:" + drumParts.cx + ", cy:" + drumParts.cy + ")");
         if (drumParts.instid == "drum" || drumParts.instid == "cymbal"){
             double distance = Math.sqrt(Math.pow(drumParts.cx - touchX, 2) + Math.pow(drumParts.cy - touchY, 2));
             Log.d("CanvasView", "Distance:" + distance + ", Radius:" + drumParts.radius);
             bool =  distance < drumParts.radius;
-        }else {
+        }else if(drumParts.instid == "bass"){
             double distanceWidth = Math.abs(drumParts.cx-touchX);
             double distanceHeight = Math.abs(drumParts.cy-touchY);
             bool = distanceWidth < drumParts.width && distanceHeight < drumParts.depth;
+        }else{
+            bool = false;
         }
         return bool;
     }
@@ -227,9 +229,8 @@ public class CanvasView extends View {
         for(int i=0; i<drums.size(); i++){
             Log.d("debugJson","cx:"+drums.get(i).cx);
             Log.d("debugJson",drums.get(i).instid);
-
         }
-        Log.d("debugJson",""+drums.size());
+        Log.d("debugJson", "" + drums.size());
 
         invalidate();
     }

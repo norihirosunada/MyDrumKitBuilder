@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String instrument;
 
     SharedPreferences pref;
+    
+    int cx,cy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Display display = this.getWindowManager().getDefaultDisplay();
         final Point point = new Point();
         display.getSize(point);
+        cx = point.x/2;
+        cy = point.y/2;
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -131,23 +135,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         canvasView = (CanvasView)findViewById(R.id.canvas_view);
-        canvasView.post(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 1; i++) {
-                    canvasView.addDrum(point.x/2,point.y/2-200,220,180,"bass");
-                    canvasView.addDrum(point.x/2-130,point.y/2-130,100,"drum");  //high tom
-                    canvasView.addDrum(point.x/2+100,point.y/2-130,120,"drum"); //low tom
-                    canvasView.addDrum(point.x/2-200,point.y/2+130,140,"drum"); //snare drum
-                    canvasView.addDrum(point.x/2+200,point.y/2+150,160,"drum"); //floor tom
-                    canvasView.addDrum(point.x/2-420,point.y/2+50,140,"cymbal");   //hihat
-                    canvasView.addDrum(point.x/2+450,point.y/2+100,200,"cymbal");   //ride
-                    canvasView.addDrum(point.x/2-350,point.y/2-200,160,"cymbal");   //crash
-                    canvasView.addDrum(point.x/2+350,point.y/2-180,180,"cymbal");   //crash
+
+        pref = getSharedPreferences("pref",MODE_PRIVATE);
+        if(pref.getBoolean("active",false)) {
+            canvasView.onLoadJson(pref);
+        }else {
+            canvasView.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    preset();
+
+                    canvasView.invalidate();
                 }
-                canvasView.invalidate();
-            }
-        });
+            });
+            pref.edit().putBoolean("active",true).apply();
+        }
 
         file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/capture.jpeg");
 
@@ -163,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         linearLayout.setVisibility(View.GONE);
         numberPicker2.setVisibility(View.GONE);
 
-        pref = getSharedPreferences("pref",MODE_PRIVATE);
     }
 
     @Override
@@ -175,21 +177,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         display.getSize(point);
     }
 
-
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.nav_edit:
-                Log.d(TAG, "nav_edit Selected!");
-                break;
-            case R.id.nav_gallery:
-                Log.d(TAG, "nav_gallery Selected!");
-                canvasView.onLoadJson(pref);
+            case R.id.nav_preset:
+                preset();
+                Log.d(TAG,"nav_preset");
                 break;
             case R.id.nav_share:
-                share(this,"#MyDrumSetting");
+                share(this,"#MyDrumSetting\nhttps://play.google.com/store/apps/details?id=com.norihirosunada.mydrumkitbuilder");
                 Log.d(TAG, "nav_share Selected!");
                 break;
             case R.id.nav_save:
@@ -214,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         view.setDrawingCacheEnabled(false);
         return bitmap;
     }
-
 
     public void share(final Activity activity, final String text) {
         File imagePath= new File(Environment.getExternalStorageDirectory().getPath() + "/MyDrumSetGallery/setting.PNG");
@@ -263,16 +259,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         float scale2 = numberPicker2.getValue()*10;
         switch (instrument){
             case "cymbal":
-                canvasView.addDrum(point.x / 2, point.y / 2, scale1, "cymbal");
+                canvasView.addDrum(cx, cy, scale1, "cymbal");
                 break;
             case "drum":
-                canvasView.addDrum(point.x/2,point.y/2,scale1,"drum");
+                canvasView.addDrum(cx,cy,scale1,"drum");
                 break;
             case "bass":
                 numberPicker2.setVisibility(View.GONE);
-                canvasView.addDrum(point.x/2,point.y/2,scale1,scale2,"bass");
+                canvasView.addDrum(cx,cy,scale1,scale2,"bass");
                 break;
         }
+        canvasView.invalidate();
+    }
+
+    public void preset(){
+        canvasView.addDrum(cx, cy - 200, 220, 180, "bass");
+        canvasView.addDrum(cx - 130, cy - 130, 100, "drum");  //high tom
+        canvasView.addDrum(cx + 100, cy - 130, 120, "drum"); //low tom
+        canvasView.addDrum(cx - 200, cy + 130, 140, "drum"); //snare drum
+        canvasView.addDrum(cx + 200, cy + 150, 160, "drum"); //floor tom
+        canvasView.addDrum(cx - 420, cy + 50, 140, "cymbal");   //hihat
+        canvasView.addDrum(cx + 450, cy + 100, 200, "cymbal");   //ride
+        canvasView.addDrum(cx - 350, cy - 200, 160, "cymbal");   //crash
+        canvasView.addDrum(cx + 350, cy - 180, 180, "cymbal");   //crash
         canvasView.invalidate();
     }
 }

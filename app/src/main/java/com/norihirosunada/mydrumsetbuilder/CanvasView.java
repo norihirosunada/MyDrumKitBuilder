@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -17,10 +15,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,26 +76,29 @@ public class CanvasView extends View {
                 stroke.setColor(Color.BLACK);
             }
             String instId = drums.get(i).instid;
-            if(instId == "drum"){
-                drumPaint.setColor(Color.WHITE);
-                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
-                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, stroke);
-            }else if(instId == "cymbal"){
-                drumPaint.setColor(Color.YELLOW);
-                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
-                canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, stroke);
-            }else if(instId == "bass"){
-                drumPaint.setColor(Color.GRAY);
-                canvas.drawRect(drums.get(i).cx - drums.get(i).width,
-                        drums.get(i).cy - drums.get(i).depth,
-                        drums.get(i).cx + drums.get(i).width,
-                        drums.get(i).cy + drums.get(i).depth,
-                        drumPaint);
-                canvas.drawRect(drums.get(i).cx-drums.get(i).width,
-                        drums.get(i).cy-drums.get(i).depth,
-                        drums.get(i).cx+drums.get(i).width,
-                        drums.get(i).cy+drums.get(i).depth,
-                        stroke);
+            switch(instId){
+                case "drum":
+                    drumPaint.setColor(Color.WHITE);
+                    canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
+                    canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, stroke);
+                    break;
+                case "cymbal":
+                    drumPaint.setColor(Color.YELLOW);
+                    canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, drumPaint);
+                    canvas.drawCircle(drums.get(i).cx, drums.get(i).cy, drums.get(i).radius, stroke);
+                    break;
+                case "bass":
+                    drumPaint.setColor(Color.GRAY);
+                    canvas.drawRect(drums.get(i).cx - drums.get(i).width,
+                            drums.get(i).cy - drums.get(i).depth,
+                            drums.get(i).cx + drums.get(i).width,
+                            drums.get(i).cy + drums.get(i).depth,
+                            drumPaint);
+                    canvas.drawRect(drums.get(i).cx-drums.get(i).width,
+                            drums.get(i).cy-drums.get(i).depth,
+                            drums.get(i).cx+drums.get(i).width,
+                            drums.get(i).cy+drums.get(i).depth,
+                            stroke);
             }
 
         }
@@ -151,8 +148,6 @@ public class CanvasView extends View {
         @Override
         public void onLongPress(MotionEvent event){
             Log.d("CanvasView", "ACTION_LONGPRESS");
-//            onSaveJson();
-//            Toast.makeText(getContext(), "Saved Data", Toast.LENGTH_SHORT).show();
             super.onLongPress(event);
         }
 
@@ -163,7 +158,7 @@ public class CanvasView extends View {
             if(velocityY > 10000 && selectDrumId != -1) {
                 drums.remove(selectDrumId);
                 invalidate();
-                Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Deleted", Toast.LENGTH_SHORT).show();
             }
 
             Log.d("CanvasView", "ACTION_FLING"+velocityX+" "+velocityY);
@@ -175,51 +170,36 @@ public class CanvasView extends View {
     boolean isTouch(DrumParts drumParts, float touchX, float touchY) {
         boolean bool;
         Log.d("CanvasView", "DrumPart(cx:" + drumParts.cx + ", cy:" + drumParts.cy + ")");
-        if (drumParts.instid.equals("drum") || drumParts.instid.equals("cymbal")){
-            double distance = Math.sqrt(Math.pow(drumParts.cx - touchX, 2) + Math.pow(drumParts.cy - touchY, 2));
-            Log.d("CanvasView", "Distance:" + distance + ", Radius:" + drumParts.radius);
-            bool =  distance < drumParts.radius;
-        }else if(drumParts.instid.equals("bass")){
-            double distanceWidth = Math.abs(drumParts.cx-touchX);
-            double distanceHeight = Math.abs(drumParts.cy-touchY);
-            bool = distanceWidth < drumParts.width && distanceHeight < drumParts.depth;
-        }else{
-            bool = false;
+        switch (drumParts.instid){
+            case "drum":
+            case "cymbal":
+                double distance = Math.sqrt(Math.pow(drumParts.cx - touchX, 2) + Math.pow(drumParts.cy - touchY, 2));
+                Log.d("CanvasView", "Distance:" + distance + ", Radius:" + drumParts.radius);
+                bool =  distance < drumParts.radius;
+                break;
+            case "bass":
+                double distanceWidth = Math.abs(drumParts.cx-touchX);
+                double distanceHeight = Math.abs(drumParts.cy-touchY);
+                bool = distanceWidth < drumParts.width && distanceHeight < drumParts.depth;
+                break;
+            default:
+                bool = false;
         }
         return bool;
     }
 
     public void onSaveJson(SharedPreferences pref) {
-//        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
-//        setSharedPreferencesJSONArray(this.getContext(), file.toString(), Context.MODE_PRIVATE, "Setting1", drums);
 
         Gson gson = new Gson();
-//        gson.toJson(drums);
-        pref.edit().putString("MySetting",gson.toJson(drums)).commit();
+        pref.edit().putString("MySetting",gson.toJson(drums)).apply();
 
         Log.d("debugJson",gson.toJson(drums));
-
-
-//        pref.edit().putInt("size",drums.size()).commit();
-//        for(int i=0; i<drums.size(); i++){
-//            pref.edit().putString("drum"+i,gson.toJson(drums.get(i))).commit();
-//        }
 
     }
 
     public void onLoadJson(SharedPreferences pref){
-//        File file = new File(Environment.getExternalStorageDirectory() + "MyDrumSetBuilder/Settings/");
-//        if(drums != null)
-//            drums=getSharedPreferencesStringList(this.getContext(),file.toString(), Context.MODE_PRIVATE, "Setting1", null);
 
         Gson gson = new Gson();
-//        drums = gson.fromJson(pref.getString("MySetting",""),new TypeToken<List<DrumParts>>(){}.getType());
-//        drums.addAll(gson.fromJson(pref.getString("MySetting",""),DrumParts[].class));
-
-//        int size = pref.getInt("size",0);
-//        for(int i=0; i<size; i++){
-//            drums.set(i,gson.fromJson(pref.getString("drums"+i,""),DrumParts.class));
-//        }
 
         String getJson = pref.getString("MySetting", "");
         drums.clear();
